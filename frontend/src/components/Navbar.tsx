@@ -35,9 +35,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div className="text-left">
               <span className="text-lg font-extrabold tracking-tight text-ink-primary">{t.brand}</span>
-              <span className="ml-1.5 rounded-full bg-teal-50 border border-teal-200 px-2 py-0.5 text-[10px] font-bold text-brand">
-                v1 MVP
-              </span>
             </div>
           </button>
         </div>

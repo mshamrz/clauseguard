@@ -14,7 +14,7 @@ export const SubscriptionPlanView: React.FC<SubscriptionPlanViewProps> = ({
   onOpenDonate,
 }) => {
   const { t, lang } = useLanguage();
-  const [promoCode, setPromoCode] = useState('DEMO2026');
+  const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(() => {
     return localStorage.getItem('clauseguard_plan_active') === 'true';
   });
@@ -38,7 +38,11 @@ export const SubscriptionPlanView: React.FC<SubscriptionPlanViewProps> = ({
   const handleSelectPlan = (plan: 'free' | 'pro' | 'agency') => {
     setSelectedPlan(plan);
     if (plan === 'free') {
-      setPromoApplied(true);
+      if (!promoApplied) {
+        // prompt user to enter promo code
+        setPromoError(lang === 'uk' ? 'Будь ласка, введіть промокод для активації цього тарифу.' : 'Please enter a promo code to activate this plan.');
+        return;
+      }
       localStorage.setItem('clauseguard_plan_active', 'true');
     } else if (plan === 'pro') {
       onOpenDonate();
@@ -64,7 +68,7 @@ export const SubscriptionPlanView: React.FC<SubscriptionPlanViewProps> = ({
       </div>
 
       {/* Promo Code Input Card */}
-      <div className="rounded-2xl border border-teal-200 bg-gradient-to-r from-teal-50/80 via-white to-teal-50/40 p-6 sm:p-7 shadow-sm">
+      <div className="rounded-2xl border border-surface-border bg-white p-6 sm:p-7 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -75,8 +79,8 @@ export const SubscriptionPlanView: React.FC<SubscriptionPlanViewProps> = ({
             </div>
             <p className="text-xs text-ink-secondary">
               {lang === 'uk'
-                ? 'Використайте офіційний промокод DEMO2026 для повноцінного безкоштовного тестування.'
-                : 'Use official evaluation code DEMO2026 for 100% free full access during grading.'}
+                ? 'Введіть ваш партнерський або персональний промокод для активації доступу.'
+                : 'Enter your partner or personal promo code to activate access.'}
             </p>
           </div>
 
@@ -89,11 +93,11 @@ export const SubscriptionPlanView: React.FC<SubscriptionPlanViewProps> = ({
                 setPromoError(null);
               }}
               placeholder={t.subscription.promoPlaceholder}
-              className="w-full sm:w-64 rounded-xl border border-surface-border bg-white px-3.5 py-2 text-xs font-mono font-semibold uppercase text-ink-primary placeholder:normal-case placeholder:font-sans outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+              className="w-full sm:w-64 rounded-xl border border-surface-border bg-surface-bg px-3.5 py-2.5 text-xs font-mono font-semibold uppercase text-ink-primary placeholder:normal-case placeholder:font-sans outline-none focus:border-brand focus:ring-1 focus:ring-brand"
             />
             <button
               type="submit"
-              className="shrink-0 rounded-xl bg-brand px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-brand-hover transition-colors"
+              className="shrink-0 rounded-xl bg-brand px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-brand-hover transition-colors"
             >
               {t.subscription.applyPromoBtn}
             </button>
@@ -107,7 +111,7 @@ export const SubscriptionPlanView: React.FC<SubscriptionPlanViewProps> = ({
               <span>{t.subscription.promoSuccessMsg}</span>
             </div>
             <span className="text-[11px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">
-              {promoCode.toUpperCase() || 'DEMO2026'}
+              ACTIVE
             </span>
           </div>
         )}
