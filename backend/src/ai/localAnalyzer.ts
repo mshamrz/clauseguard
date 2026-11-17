@@ -18,6 +18,14 @@ const RISK_RULES: RiskRule[] = [
   {
     category: 'UNLIMITED_LIABILITY',
     detect: (t) => {
+      // Safe waiver: if parties expressly exclude lost profits or indirect damages, contractor is SAFE
+      if (
+        /не несе.*відповідальності.*(?:непрям|упущен)|не підлягає.*відшкодуванню.*(?:непрям|упущен)|neither party.*(?:liable|liability).*(?:consequential|indirect|lost profits)/i.test(
+          t,
+        )
+      ) {
+        return null;
+      }
       if (
         /unlimited|uncapped|необмежен|без встановлення будь-якої верхньої межі|обмежується сумою в \$100/i.test(
           t,
@@ -25,7 +33,12 @@ const RISK_RULES: RiskRule[] = [
       ) {
         return 'HIGH';
       }
-      if (/consequential damages|lost profits|упущену вигоду/i.test(t)) {
+      // ONLY flag as MEDIUM if contractor IS expressly burdened with lost profits:
+      if (
+        /(?:виконавець|підрядник|contractor).*відшкодовує.*упущену вигоду|включаючи упущену вигоду|including lost profits/i.test(
+          t,
+        )
+      ) {
         return 'MEDIUM';
       }
       return null;
@@ -46,6 +59,14 @@ const RISK_RULES: RiskRule[] = [
   {
     category: 'DELAYED_PAYMENT',
     detect: (t) => {
+      // Safe standard terms: 5, 7, 10, 14, 15, 20 days are completely healthy
+      if (
+        /(?:протягом|within)\s+(?:5|7|10|14|15|20|десяти|семи|п['’]яти|чотирнадцяти|п['’]ятнадцяти|двадцяти)\s*(?:bank|banking|calendar|робочих|банківських|календарних)?\s*(?:днів|days)/i.test(
+          t,
+        ) && !/pay-when-paid|надходження валютної виручки/i.test(t)
+      ) {
+        return null;
+      }
       if (
         /pay-when-paid|until client has first received|шістдесят|60\s*(?:calendar|bank|банківських)?\s*дн|sixty \(60\)|надходження валютної виручки|призупинити виплату.*невизначений/i.test(
           t,
@@ -74,6 +95,10 @@ const RISK_RULES: RiskRule[] = [
   {
     category: 'UNFAIR_IP_TRANSFER',
     detect: (t) => {
+      // Safe IP transfer: transfers upon full payment
+      if (/(?:після|з моменту|за умови)\s+(?:повної|100%|фактичної)?\s*оплат|upon (?:full )?payment/i.test(t)) {
+        return null;
+      }
       if (
         /pre-existing|попередні напрацювання|власні бібліотеки|before any invoice is paid|regardless of whether invoices.*paid|незалежно від факту проведення оплати|upon creation/i.test(
           t,
@@ -81,7 +106,7 @@ const RISK_RULES: RiskRule[] = [
       ) {
         return 'HIGH';
       }
-      if (/intellectual property assignment|майнові права інтелектуальної власності/i.test(t) && !/upon full payment|після повної оплати/i.test(t)) {
+      if (/intellectual property assignment|майнові права інтелектуальної власності/i.test(t)) {
         return 'MEDIUM';
       }
       return null;
@@ -102,14 +127,18 @@ const RISK_RULES: RiskRule[] = [
   {
     category: 'PENALTY_CLAUSES',
     detect: (t) => {
+      // Safe statutory NBU rate or reasonable mutual rates <= 0.1% are FAIR
+      if (/облікової ставки нбу|облікова ставка нбу|подвійн.*обліков.*ставк/i.test(t)) {
+        return null;
+      }
       if (
-        /\$15,000|\$10,000|50 000|2%|5%|liquidated penalty|fixed penalty|штраф.*пен|неустойк/i.test(
+        /\$15,000|\$10,000|50 000|40 000|[2-9]%|10%|liquidated penalty|fixed penalty/i.test(
           t,
         )
       ) {
         return 'HIGH';
       }
-      if (/deduct unilaterally|withhold payment/i.test(t)) {
+      if (/0[.,][2-9]%|0[.,]5%|неустойк.*0[.,]5%|deduct unilaterally|withhold payment/i.test(t)) {
         return 'MEDIUM';
       }
       return null;
@@ -130,6 +159,10 @@ const RISK_RULES: RiskRule[] = [
   {
     category: 'UNFAIR_NON_COMPETE',
     detect: (t) => {
+      // Standard non-solicitation of direct employees or clients is fair
+      if (/не переманювати співробітників|не переманювати клієнтів/i.test(t) && !/не має права надавати будь-які послуги|забороняється працювати/i.test(t)) {
+        return null;
+      }
       if (
         /non-compete|неконкуренц|twenty-four \(24\) months|трьох \(3\) років|3 роки|worldwide|не має права надавати будь-які послуги/i.test(
           t,
@@ -158,11 +191,11 @@ const RISK_RULES: RiskRule[] = [
   {
     category: 'OTHER_ASYMMETRIC_RISK',
     detect: (t) => {
-      // If mutual termination with payment for work done, it is fair and standard
+      // Mutual termination with payment for work done is fair
       if ((/кожна зі сторін|either party/i.test(t)) && (/оплат|pay/i.test(t))) {
         return null;
       }
-      if (/односторонньому порядку розірвати|без оплати фактично виконаного|arbitration in new york/i.test(t)) {
+      if (/односторонньому порядку розірвати.*без оплати|arbitration in new york/i.test(t)) {
         return 'HIGH';
       }
       if (/sole discretion|довільний строк без обмеження часу/i.test(t)) {
