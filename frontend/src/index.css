@@ -4,19 +4,15 @@
 
 @layer base {
   html {
-    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-    color: #141413;
-    background-color: #f7f5f0;
-  }
-
-  * {
-    border-radius: 0px !important;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #0F172A;
+    background-color: #F8FAFC;
   }
 
   button:focus-visible,
   a:focus-visible,
   input:focus-visible {
-    outline: 2px solid #0f4c3a;
+    outline: 2px solid #0D9488;
     outline-offset: 2px;
   }
 }

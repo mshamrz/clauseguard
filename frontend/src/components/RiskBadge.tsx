@@ -8,9 +8,9 @@ interface RiskBadgeProps {
 }
 
 const BADGE_CLASSES: Record<RiskLevel, string> = {
-  HIGH: 'border-risk-highBorder bg-risk-highBg text-risk-highText',
-  MEDIUM: 'border-risk-medBorder bg-risk-medBg text-risk-medText',
-  LOW: 'border-risk-lowBorder bg-risk-lowBg text-risk-lowText',
+  HIGH: 'border-rose-200 bg-rose-50 text-rose-700',
+  MEDIUM: 'border-amber-200 bg-amber-50 text-amber-700',
+  LOW: 'border-emerald-200 bg-emerald-50 text-emerald-700',
 };
 
 export const RiskBadge: React.FC<RiskBadgeProps> = ({ level }) => {
@@ -27,7 +27,7 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({ level }) => {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 border px-2.5 py-0.5 font-mono text-[11px] font-semibold ${BADGE_CLASSES[level]}`}
+      className={`inline-flex items-center gap-1.5 border rounded-full px-3 py-0.5 text-[11px] font-bold tracking-wide shadow-xs ${BADGE_CLASSES[level]}`}
     >
       {icon}
       <span>{t.extraction.severityLabels[level]}</span>

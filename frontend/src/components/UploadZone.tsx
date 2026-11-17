@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AlertTriangle, Download, Loader2, Upload } from 'lucide-react';
+import { AlertTriangle, Download, FileText, Loader2, Upload } from 'lucide-react';
 import {
   analyzeAudit,
   ApiClientError,
@@ -104,14 +104,18 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onExtracted }) => {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
       {/* Left 6 cols: Primary Drag-and-Drop Box */}
-      <div className="flex flex-col border border-surface-strong bg-surface-card lg:col-span-6">
-        <div className="border-b border-surface-strong bg-surface-subtle px-4 py-2.5">
-          <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink-primary">
-            {t.upload.sectionTitle}
+      <div className="flex flex-col rounded-2xl border border-surface-border bg-surface-card shadow-sm overflow-hidden lg:col-span-6">
+        <div className="border-b border-surface-border bg-surface-subtle px-5 py-3.5 flex items-center justify-between">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-ink-primary flex items-center gap-2">
+            <Upload className="h-4 w-4 text-brand" />
+            <span>{t.upload.sectionTitle}</span>
           </h2>
+          <span className="text-[11px] font-semibold text-brand bg-teal-50 border border-teal-200 px-2.5 py-0.5 rounded-full">
+            PDF / DOCX
+          </span>
         </div>
 
-        <div className="flex flex-1 flex-col p-4">
+        <div className="flex flex-1 flex-col p-5">
           <div
             role="button"
             tabIndex={0}
@@ -129,10 +133,10 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onExtracted }) => {
             }}
             onDragLeave={() => setIsDragging(false)}
             onDrop={onDrop}
-            className={`flex flex-1 cursor-pointer flex-col items-center justify-center border-2 border-dashed px-6 py-10 text-center transition-colors ${
+            className={`flex flex-1 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-12 text-center transition-all ${
               isDragging
-                ? 'border-brand bg-brand-subtle'
-                : 'border-surface-border bg-surface-bg hover:border-brand hover:bg-brand-subtle/40'
+                ? 'border-brand bg-brand-subtle scale-[0.99]'
+                : 'border-slate-300 bg-slate-50/60 hover:border-brand hover:bg-teal-50/40'
             }`}
           >
             <input
@@ -147,19 +151,19 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onExtracted }) => {
             />
 
             {loadingStage ? (
-              <div className="flex items-center gap-2.5 text-sm font-medium text-brand">
-                <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-                <span>{loadingStage}</span>
+              <div className="flex flex-col items-center gap-3 text-sm font-semibold text-brand">
+                <Loader2 className="h-8 w-8 animate-spin" aria-hidden="true" />
+                <span className="animate-pulse">{loadingStage}</span>
               </div>
             ) : (
               <>
-                <div className="flex h-10 w-10 items-center justify-center border border-surface-strong bg-brand text-white">
-                  <Upload className="h-5 w-5" aria-hidden="true" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-100 text-brand shadow-sm">
+                  <Upload className="h-6 w-6" aria-hidden="true" />
                 </div>
-                <p className="mt-4 text-sm font-semibold text-ink-primary">
+                <p className="mt-4 text-sm font-bold text-ink-primary">
                   {t.upload.dropzoneTitle}
                 </p>
-                <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                <p className="mt-1 text-xs text-ink-muted max-w-xs">
                   {t.upload.dropzoneHint}
                 </p>
               </>
@@ -169,9 +173,9 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onExtracted }) => {
           {errorMessage && (
             <div
               role="alert"
-              className="mt-4 flex items-start gap-2.5 border border-risk-highBorder bg-risk-highBg px-3.5 py-3 text-xs leading-relaxed text-risk-highText"
+              className="mt-4 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-medium text-rose-700"
             >
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
               <span>{errorMessage}</span>
             </div>
           )}
@@ -179,11 +183,15 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onExtracted }) => {
       </div>
 
       {/* Right 6 cols: Human-Friendly Sample Contracts */}
-      <div className="flex flex-col border border-surface-strong bg-surface-card lg:col-span-6">
-        <div className="border-b border-surface-strong bg-surface-subtle px-4 py-2.5">
-          <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink-primary">
-            {t.upload.samplesHeading}
+      <div className="flex flex-col rounded-2xl border border-surface-border bg-surface-card shadow-sm overflow-hidden lg:col-span-6">
+        <div className="border-b border-surface-border bg-surface-subtle px-5 py-3.5 flex items-center justify-between">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-ink-primary flex items-center gap-2">
+            <FileText className="h-4 w-4 text-brand" />
+            <span>{t.upload.samplesHeading}</span>
           </h2>
+          <span className="text-[11px] font-semibold text-ink-muted">
+            1-Click Test
+          </span>
         </div>
 
         <div className="flex-1 divide-y divide-surface-border">
@@ -192,31 +200,31 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onExtracted }) => {
             return (
               <div
                 key={sample.filename}
-                className="flex flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center"
+                className="flex flex-col justify-between gap-3 p-4 hover:bg-slate-50/80 transition-colors sm:flex-row sm:items-center"
               >
-                <div className="min-w-0">
+                <div className="min-w-0 space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-ink-primary">
+                    <span className="text-sm font-bold text-ink-primary">
                       {lang === 'uk' ? sample.labelUk : sample.labelEn}
                     </span>
-                    <span className="border border-surface-border bg-surface-bg px-1.5 py-0.5 font-mono text-[10px] uppercase text-ink-muted">
+                    <span className="rounded-md border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-bold text-ink-secondary">
                       {sample.filename.endsWith('.pdf') ? 'PDF' : 'DOCX'}
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs text-ink-secondary">
+                  <p className="text-xs text-ink-secondary leading-relaxed">
                     {lang === 'uk' ? sample.descriptionUk : sample.descriptionEn}
                   </p>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-1.5">
+                <div className="flex shrink-0 items-center gap-2">
                   <button
                     type="button"
                     disabled={Boolean(loadingStage)}
                     onClick={() => void handleSampleTest(sample.filename)}
-                    className={`border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 ${
+                    className={`rounded-xl px-3.5 py-2 text-xs font-bold shadow-sm transition-all disabled:opacity-50 ${
                       isScannedTest
-                        ? 'border-risk-medBorder bg-risk-medBg text-risk-medText hover:bg-amber-100'
-                        : 'border-brand bg-brand text-white hover:bg-brand-hover'
+                        ? 'border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
+                        : 'bg-brand text-white hover:bg-brand-hover shadow-brand/20'
                     }`}
                   >
                     {isScannedTest ? t.upload.runTestError : t.upload.runTest}
@@ -226,7 +234,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onExtracted }) => {
                     download={sample.filename}
                     title={t.upload.downloadSample}
                     aria-label={`${t.upload.downloadSample} ${sample.filename}`}
-                    className="inline-flex items-center border border-surface-border bg-surface-bg p-1.5 text-ink-secondary transition-colors hover:border-surface-strong hover:text-ink-primary"
+                    className="inline-flex items-center rounded-xl border border-surface-border bg-white p-2 text-ink-secondary transition-colors hover:border-slate-400 hover:text-ink-primary"
                   >
                     <Download className="h-3.5 w-3.5" aria-hidden="true" />
                   </a>

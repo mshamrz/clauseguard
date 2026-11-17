@@ -121,9 +121,9 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
   if (showDownloadPage && analysis) {
     return (
       <div className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-surface-strong pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-surface-border pb-4">
           <div>
-            <h1 className="font-serif text-2xl font-semibold text-ink-primary">
+            <h1 className="font-sans text-2xl font-semibold text-ink-primary">
               {t.extraction.downloadPageTitle}
             </h1>
             <p className="mt-1 text-sm text-ink-secondary">{t.extraction.downloadPageSubtitle}</p>
@@ -132,7 +132,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
             <button
               type="button"
               onClick={() => setShowDownloadPage(false)}
-              className="inline-flex items-center gap-1.5 border border-surface-strong bg-surface-card px-3.5 py-2 text-xs font-medium text-ink-primary transition-colors hover:bg-surface-subtle"
+              className="inline-flex items-center gap-1.5 rounded-2xl border border-surface-border bg-surface-card shadow-sm px-3.5 py-2 text-xs font-medium text-ink-primary transition-colors hover:bg-surface-subtle"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t.extraction.backToResultsBtn}</span>
@@ -165,7 +165,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
         )}
 
         {/* Simulated 1-Page Sheet Preview */}
-        <article className="mx-auto max-w-3xl border border-surface-strong bg-surface-card p-6 sm:p-8">
+        <article className="mx-auto max-w-3xl rounded-2xl border border-surface-border bg-surface-card shadow-sm p-6 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-brand pb-3">
             <span className="font-mono text-xs font-semibold uppercase tracking-wider text-brand">
               CLAUSEGUARD · EXECUTIVE SUMMARY
@@ -238,7 +238,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Bar: Status, Title, Shareable UUID & Action Buttons */}
-      <div className="flex flex-col justify-between gap-4 border-b border-surface-strong pb-5 lg:flex-row lg:items-end">
+      <div className="flex flex-col justify-between gap-4 border-b border-surface-border pb-5 lg:flex-row lg:items-end">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 border border-brand bg-brand-subtle px-2.5 py-0.5 font-mono text-[11px] font-semibold text-brand">
@@ -249,7 +249,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
               {t.extraction.expiresNote}
             </span>
           </div>
-          <h1 className="mt-2.5 font-serif text-2xl font-semibold tracking-tight text-ink-primary sm:text-3xl">
+          <h1 className="mt-2.5 font-sans text-2xl font-semibold tracking-tight text-ink-primary sm:text-3xl">
             {record.fileName}
           </h1>
           {analysis && (
@@ -293,7 +293,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
             <button
               type="button"
               onClick={handleCopyAllCounterClauses}
-              className="inline-flex items-center gap-1.5 border border-surface-strong bg-surface-card px-3 py-2 text-xs font-medium text-ink-primary transition-colors hover:bg-surface-subtle"
+              className="inline-flex items-center gap-1.5 rounded-2xl border border-surface-border bg-surface-card shadow-sm px-3 py-2 text-xs font-medium text-ink-primary transition-colors hover:bg-surface-subtle"
             >
               {copiedKey === 'copy-all' ? (
                 <>
@@ -312,7 +312,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center gap-1.5 border border-surface-strong bg-surface-card px-3 py-2 text-xs font-medium text-ink-primary transition-colors hover:bg-surface-subtle"
+            className="inline-flex items-center gap-1.5 rounded-2xl border border-surface-border bg-surface-card shadow-sm px-3 py-2 text-xs font-medium text-ink-primary transition-colors hover:bg-surface-subtle"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t.extraction.newUpload}</span>
@@ -321,7 +321,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
       </div>
 
       {/* Risk Score & Contract Metadata Grid */}
-      <dl className="grid grid-cols-2 divide-x divide-y divide-surface-border border border-surface-strong bg-surface-card lg:grid-cols-5 lg:divide-y-0">
+      <dl className="grid grid-cols-2 divide-x divide-y divide-surface-border rounded-2xl border border-surface-border bg-surface-card shadow-sm lg:grid-cols-5 lg:divide-y-0">
         {analysis && (
           <div className="col-span-2 p-4 lg:col-span-2">
             <dt className="font-mono text-[11px] uppercase tracking-wider text-ink-muted">
@@ -380,7 +380,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 
       {/* Negotiation Checklist */}
       {analysis && analysis.negotiationChecklist.length > 0 && (
-        <section className="border border-surface-strong bg-surface-card p-5">
+        <section className="rounded-2xl border border-surface-border bg-surface-card shadow-sm p-5">
           <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink-primary">
             {t.extraction.checklistTitle}
           </h2>
@@ -401,12 +401,12 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
       {analysis && (
         <section className="space-y-4">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-            <h2 className="font-serif text-xl font-semibold text-ink-primary">
+            <h2 className="font-sans text-xl font-semibold text-ink-primary">
               {t.extraction.flaggedTitle} ({flaggedClauses.length})
             </h2>
 
             <div
-              className="inline-flex border border-surface-strong bg-surface-card"
+              className="inline-flex rounded-2xl border border-surface-border bg-surface-card shadow-sm"
               role="tablist"
               aria-label="Filter flagged clauses by severity"
             >
@@ -447,10 +447,10 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                 const categoryName = t.extraction.categories[flag.category] ?? flag.category;
 
                 return (
-                  <article key={key} className="border border-surface-strong bg-surface-card">
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-surface-strong bg-surface-subtle px-4 py-2.5">
+                  <article key={key} className="rounded-2xl border border-surface-border bg-surface-card shadow-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-surface-border bg-surface-subtle px-4 py-2.5">
                       <div className="flex flex-wrap items-center gap-2.5">
-                        <span className="border border-surface-strong bg-surface-card px-2 py-0.5 font-mono text-xs font-semibold text-ink-primary">
+                        <span className="rounded-2xl border border-surface-border bg-surface-card shadow-sm px-2 py-0.5 font-mono text-xs font-semibold text-ink-primary">
                           § {flag.clauseNumber}
                         </span>
                         <span className="text-xs font-semibold text-ink-primary">
@@ -467,7 +467,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                           {t.extraction.col1Title}
                         </span>
                         <blockquote
-                          className={`mt-2 border-l-2 ${BORDER_ACCENTS[flag.riskLevel]} bg-surface-bg p-3 font-serif text-[13px] leading-relaxed text-ink-primary`}
+                          className={`mt-2 border-l-2 ${BORDER_ACCENTS[flag.riskLevel]} bg-surface-bg p-3 font-sans text-[13px] leading-relaxed text-ink-primary`}
                         >
                           “{flag.originalExcerpt}”
                         </blockquote>
@@ -524,7 +524,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
         <button
           type="button"
           onClick={onOpenDonate}
-          className="shrink-0 border border-surface-strong bg-surface-subtle px-3.5 py-2 text-xs font-semibold text-ink-primary transition-colors hover:bg-brand hover:text-white"
+          className="shrink-0 rounded-xl border border-surface-border bg-surface-subtle px-3.5 py-2 text-xs font-semibold text-ink-primary transition-colors hover:bg-brand hover:text-white"
         >
           {t.nav.donate}
         </button>
