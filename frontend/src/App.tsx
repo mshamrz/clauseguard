@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Loader2, Lock, Shield, Sparkles } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 import { fetchAuditById, fetchMyAudits } from './api/client';
 import { AuthModal } from './components/AuthModal';
 import { DonationModal } from './components/DonationModal';
