@@ -44,6 +44,7 @@ Evaluate the contract for these risks and assign HIGH, MEDIUM, or LOW severity:
 
 6. OTHER_ASYMMETRIC_RISK:
    - HIGH / MEDIUM / LOW: Unilateral termination without paying for completed work, expensive foreign arbitration at contractor's expense, or unilateral contract changes.
+   - EXCLUSION: If termination is mutual (granted to BOTH parties / 'Кожна зі Сторін' / 'either party') with written notice (e.g. 14+ days) and guarantees payment for all work performed to date, this is completely FAIR and standard; DO NOT flag it as a risk.
 
 OUTPUT REQUIREMENTS PER FLAGGED CLAUSE:
 - "originalExcerpt": Exact verbatim quote copied from <contract_clauses>.

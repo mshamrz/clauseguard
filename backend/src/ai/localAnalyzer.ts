@@ -158,6 +158,10 @@ const RISK_RULES: RiskRule[] = [
   {
     category: 'OTHER_ASYMMETRIC_RISK',
     detect: (t) => {
+      // If mutual termination with payment for work done, it is fair and standard
+      if ((/кожна зі сторін|either party/i.test(t)) && (/оплат|pay/i.test(t))) {
+        return null;
+      }
       if (/односторонньому порядку розірвати|без оплати фактично виконаного|arbitration in new york/i.test(t)) {
         return 'HIGH';
       }
