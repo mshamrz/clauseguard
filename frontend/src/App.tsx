@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Loader2, ShieldCheck, Sparkles, Zap } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, FileText, Loader2, Scale, ShieldCheck, Sparkles, Wand2, Zap } from 'lucide-react';
 import { fetchAuditById, fetchMyAudits } from './api/client';
 import { AuthModal } from './components/AuthModal';
+import { ContractBuilderView } from './components/ContractBuilderView';
 import { DonationModal } from './components/DonationModal';
 import { Navbar } from './components/Navbar';
 import { ResultsView } from './components/ResultsView';
+import { SowReconciliationView } from './components/SowReconciliationView';
 import { SubscriptionPlanView } from './components/SubscriptionPlanView';
 import { UploadZone } from './components/UploadZone';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -32,6 +34,7 @@ const MainShell: React.FC = () => {
   const [loadingAudit, setLoadingAudit] = useState(false);
   const [auditLoadError, setAuditLoadError] = useState(false);
   const [recentAudits, setRecentAudits] = useState<AuditSummaryItem[]>([]);
+  const [activeTool, setActiveTool] = useState<'RECONCILE' | 'BUILDER' | 'AUDIT'>('RECONCILE');
 
   // 3-Step Flow: 1. Account -> 2. Plan & Promo Code -> 3. Contract Audit
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(() => {
@@ -456,15 +459,15 @@ const MainShell: React.FC = () => {
             onOpenDonate={() => setDonateOpen(true)}
           />
         ) : (
-          /* STEP 3: Contract Upload & Ingestion Screen */
+          /* STEP 3: Suite of Contract Tools (SOW Matcher, Builder, Audit) */
           <div className="space-y-8">
             
-            {/* Header info */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-6">
+            {/* Header info & Mode Navigation */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-6">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="rounded-full bg-teal-50 border border-teal-200 px-3 py-0.5 text-xs font-bold text-brand">
-                    Step 3: AI Contract Audit
+                    {lang === 'uk' ? 'Крок 3: Інструменти перевірки та створення договорів' : 'Step 3: Contract Studio'}
                   </span>
                   <span className="rounded-full bg-emerald-50 border border-emerald-200 px-3 py-0.5 text-xs font-bold text-emerald-700 flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3" />
@@ -472,10 +475,12 @@ const MainShell: React.FC = () => {
                   </span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-ink-primary tracking-tight">
-                  {t.workspace.title}
+                  {lang === 'uk' ? 'Студія B2B-контрактів для IT та фрілансерів' : 'B2B Contract Studio for Freelancers & SMBs'}
                 </h1>
                 <p className="text-xs sm:text-sm text-ink-secondary max-w-3xl leading-relaxed">
-                  {t.workspace.subtitle}
+                  {lang === 'uk'
+                    ? 'Оберіть потрібний режим: звірте договір із чатом на розбіжності, зберіть безпечний договір із перевірених умов або проведіть швидкий аудит файлу.'
+                    : 'Choose your workflow: reconcile SOW against chat agreements, assemble a vetted contract, or run a direct file audit.'}
                 </p>
               </div>
 
@@ -483,51 +488,106 @@ const MainShell: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setCurrentStep(2)}
-                className="shrink-0 rounded-xl border border-surface-border bg-white px-3.5 py-2 text-xs font-bold text-ink-secondary hover:text-ink-primary hover:border-slate-400 transition"
+                className="shrink-0 self-start md:self-auto rounded-xl border border-surface-border bg-white px-3.5 py-2 text-xs font-bold text-ink-secondary hover:text-ink-primary hover:border-slate-400 transition"
               >
-                Change Plan / Promo Code
+                {lang === 'uk' ? 'Тариф / Промокод' : 'Change Plan / Code'}
               </button>
             </div>
 
-            {/* Signed-in User's Recent Audits (24h TTL) */}
-            {user && recentAudits.length > 0 && (
-              <section className="rounded-2xl border border-surface-border bg-surface-card shadow-sm overflow-hidden">
-                <div className="border-b border-surface-border bg-surface-subtle px-5 py-3">
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-ink-primary">
-                    {t.recentAudits.title}
-                  </h2>
-                </div>
-                <div className="divide-y divide-surface-border">
-                  {recentAudits.slice(0, 5).map((item) => (
-                    <div
-                      key={item.auditId}
-                      className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 hover:bg-slate-50 transition-colors"
-                    >
-                      <div className="flex flex-wrap items-center gap-3">
-                        <span className="text-sm font-bold text-ink-primary">
-                          {item.fileName}
-                        </span>
-                        {item.overallRiskScore !== null && (
-                          <span className="rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 font-mono text-xs font-bold text-ink-secondary">
-                            {t.recentAudits.scorePrefix}: {item.overallRiskScore}/100
-                          </span>
-                        )}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => void loadAuditFromId(item.auditId)}
-                        className="rounded-xl border border-surface-border bg-white px-3.5 py-1.5 text-xs font-bold text-ink-primary shadow-xs hover:bg-surface-subtle transition-colors"
-                      >
-                        {t.recentAudits.openBtn}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+            {/* 3 Main Tool Modes Navigation Bar */}
+            <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-200/60 border border-surface-border shadow-xs">
+              <button
+                type="button"
+                onClick={() => setActiveTool('RECONCILE')}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${
+                  activeTool === 'RECONCILE'
+                    ? 'bg-white text-brand shadow-md shadow-brand/10 font-extrabold'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                <Scale className="h-4 w-4 text-brand" />
+                <span>{lang === 'uk' ? '1. Звірка SOW з перепискою' : '1. SOW & Chat Reconciliation'}</span>
+                <span className="rounded-full bg-teal-100 text-brand px-1.5 py-0.2 text-[10px] font-black">NEW</span>
+              </button>
 
-            {/* Primary Action: Clean Upload Box */}
-            <UploadZone onExtracted={openRecord} />
+              <button
+                type="button"
+                onClick={() => setActiveTool('BUILDER')}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${
+                  activeTool === 'BUILDER'
+                    ? 'bg-white text-brand shadow-md shadow-brand/10 font-extrabold'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                <Wand2 className="h-4 w-4 text-brand" />
+                <span>{lang === 'uk' ? '2. Конструктор договорів' : '2. AI Contract Builder'}</span>
+                <span className="rounded-full bg-teal-100 text-brand px-1.5 py-0.2 text-[10px] font-black">NEW</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTool('AUDIT')}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${
+                  activeTool === 'AUDIT'
+                    ? 'bg-white text-brand shadow-md shadow-brand/10 font-extrabold'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                <FileText className="h-4 w-4" />
+                <span>{lang === 'uk' ? '3. Прямий аудит файлу' : '3. Direct File Audit'}</span>
+              </button>
+            </div>
+
+            {/* Mode 1: SOW & Chat Reconciliation View */}
+            {activeTool === 'RECONCILE' && <SowReconciliationView />}
+
+            {/* Mode 2: AI Contract Builder */}
+            {activeTool === 'BUILDER' && <ContractBuilderView />}
+
+            {/* Mode 3: Direct File Audit */}
+            {activeTool === 'AUDIT' && (
+              <div className="space-y-6">
+                {/* Signed-in User's Recent Audits (24h TTL) */}
+                {user && recentAudits.length > 0 && (
+                  <section className="rounded-2xl border border-surface-border bg-surface-card shadow-sm overflow-hidden">
+                    <div className="border-b border-surface-border bg-surface-subtle px-5 py-3">
+                      <h2 className="text-xs font-bold uppercase tracking-wider text-ink-primary">
+                        {t.recentAudits.title}
+                      </h2>
+                    </div>
+                    <div className="divide-y divide-surface-border">
+                      {recentAudits.slice(0, 5).map((item) => (
+                        <div
+                          key={item.auditId}
+                          className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="flex flex-wrap items-center gap-3">
+                            <span className="text-sm font-bold text-ink-primary">
+                              {item.fileName}
+                            </span>
+                            {item.overallRiskScore !== null && (
+                              <span className="rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 font-mono text-xs font-bold text-ink-secondary">
+                                {t.recentAudits.scorePrefix}: {item.overallRiskScore}/100
+                              </span>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => void loadAuditFromId(item.auditId)}
+                            className="rounded-xl border border-surface-border bg-white px-3.5 py-1.5 text-xs font-bold text-ink-primary shadow-xs hover:bg-surface-subtle transition-colors"
+                          >
+                            {t.recentAudits.openBtn}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Primary Action: Clean Upload Box */}
+                <UploadZone onExtracted={openRecord} />
+              </div>
+            )}
           </div>
         )}
       </main>
