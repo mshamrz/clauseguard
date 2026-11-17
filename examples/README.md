@@ -1,8 +1,23 @@
-# Sample B2B Contracts for ClauseGuard Testing
+# Зразки B2B-договорів для тестування ClauseGuard
 
-This folder contains real-world contract templates with typical predatory and high-risk clauses commonly found in IT & freelance agreements, prepared for testing ClauseGuard AI:
+Ця папка містить готові тестові договори з типовими прихованими комерційними та юридичними пастками, які часто зустрічаються в ІТ-контрактах:
 
-1. **`01_Predatory_IT_MSA_EN.docx`** — English Master Services Agreement (MSA) with 5 critical commercial traps (uncapped indemnification, Net 60 pay-when-paid, client IP grab before full payment, 24-month non-compete, \$15,000 breach liquidated damages).
-2. **`02_Unfair_FOP_SOW_UK.docx`** — Ukrainian FOP Gr. 3 Statement of Work with 5 unfair terms (60-day payout, pre-payment IP transfer, 5%/day unilateral contractor penalty, 3-year non-compete).
-3. **`03_Mixed_NDA_Service.pdf`** — Bilingual digital PDF contract with \$10,000 penalty clause, Net 45 payout, broad IP assignment.
-4. **`04_Scanned_Image_Only_Test.pdf`** — Image-only scanned PDF with zero selectable text, designed to verify scanned-PDF detection and handling.
+### 🇺🇦 Файли українською мовою для перевірки:
+1. **`05_Ukrainian_FOP_Contract_Sample.docx`** / **`договір_it_послуг_фоп_зразок.docx`** — повноцінний Договір про надання ІТ-послуг (ФОП 3-ї групи) у форматі Word.
+2. **`05_Ukrainian_FOP_Contract_Sample.pdf`** / **`договір_it_послуг_фоп_зразок.pdf`** — цей самий договір у форматі PDF (2 сторінки, готовий до завантаження в ClauseGuard).
+3. **`02_Unfair_FOP_SOW_UK.docx`** — Додатковий зразок технічного завдання з кабальними умовами.
+
+#### Які пастки закладені в цьому українському договорі для виявлення ШІ:
+- **п. 2.2**: Довільний термін прийняття послуг Замовником без жодних дедлайнів + безкоштовні переробки.
+- **п. 3.2 (Pay-When-Paid)**: Відтермінування оплати на 60 банківських днів після Акта, з правом Замовника взагалі не платити, якщо йому не заплатив іноземний клієнт.
+- **п. 4.1 (Захоплення IP)**: Відчуження прав інтелектуальної власності до моменту оплати, включно з особистими напрацюваннями та бібліотеками розробника.
+- **п. 5.1 (Необмежена відповідальність)**: Необмежене стягнення упущеної вигоди та збитків клієнта з ФОП без верхнього ліміту (при тому, що відповідальність Замовника обмежена 100 грн).
+- **п. 6.1 (Драконівські штрафи)**: 40 000 грн фіксованого штрафу + 5% пені за кожен день затримки навіть на 1 день.
+- **п. 7.1 (Non-Compete)**: Заборона працювати з будь-якими ІТ-компаніями в Україні та ЄС протягом 3 років після завершення контракту.
+
+---
+
+### 🇬🇧 Англомовні та змішані файли:
+- **`01_Predatory_IT_MSA_EN.docx`** — English Master Services Agreement (MSA) з 5 типовими ризиками (Net 60, IP grab, \$15k liquidated damages).
+- **`03_Mixed_NDA_Service.pdf`** — Двомовний договір NDA та послуг (\$10,000 штраф).
+- **`04_Scanned_Image_Only_Test.pdf`** — Відсканований PDF без текстового шару для тесту блокування сканів.
