@@ -22,6 +22,7 @@ export interface ContractConfig {
   deadlineDays: string;
   revisionsCount: string;
   language: 'uk' | 'en';
+  customScope?: string;
 }
 
 export const ContractBuilderView: React.FC = () => {
@@ -46,23 +47,59 @@ export const ContractBuilderView: React.FC = () => {
   // Apply prompt shortcut
   const handleApplyPrompt = () => {
     if (!promptText.trim()) return;
-    // Simple natural-language intent extractor
     const lower = promptText.toLowerCase();
     const updated = { ...config };
-    if (lower.includes('дизайн') || lower.includes('design') || lower.includes('figma')) {
+
+    // Extract numbers and currency
+    const amountMatch = promptText.match(/(?:[$€₴]|usd|eur|uah|грн|євро|доларів)?\s*(\d{2,6})\s*(?:[$€₴]|usd|eur|uah|грн|євро|доларів)?/i);
+    if (amountMatch) {
+      updated.amount = amountMatch[1];
+    }
+    if (/eur|євро|€/i.test(promptText)) updated.currency = 'EUR';
+    else if (/uah|грн|грив/i.test(promptText)) updated.currency = 'UAH';
+    else if (/usd|долар|\$/i.test(promptText)) updated.currency = 'USD';
+
+    // Extract days
+    const daysMatch = promptText.match(/(\d{1,3})\s*(?:дн|днів|days)/i);
+    if (daysMatch) {
+      updated.deadlineDays = daysMatch[1];
+    }
+
+    // Extract revisions
+    const revMatch = promptText.match(/(\d)\s*(?:раунд|прав|revision)/i);
+    if (revMatch) {
+      updated.revisionsCount = revMatch[1];
+    }
+
+    // Extract custom service/role
+    if (lower.includes('telegram') || lower.includes('телеграм') || lower.includes('бот') || lower.includes('bot')) {
+      updated.contractType = 'DEV';
+      updated.customScope = 'розробка Telegram-бота та інтеграція платіжного API';
+    } else if (lower.includes('flutter') || lower.includes('мобільн') || lower.includes('ios') || lower.includes('android')) {
+      updated.contractType = 'DEV';
+      updated.customScope = 'розробка мобільного додатку (iOS / Android)';
+    } else if (lower.includes('seo') || lower.includes('маркетинг') || lower.includes('копірайт')) {
+      updated.contractType = 'DEV';
+      updated.customScope = 'SEO-оптимізація сайту та копірайтинг контенту';
+    } else if (lower.includes('qa') || lower.includes('тестуван')) {
+      updated.contractType = 'DEV';
+      updated.customScope = 'тестування програмного забезпечення та написання автотестів (QA)';
+    } else if (lower.includes('дизайн') || lower.includes('design') || lower.includes('figma')) {
       updated.contractType = 'DESIGN';
+      updated.customScope = 'розробка UI/UX дизайну та створення дизайн-системи в Figma';
     } else if (lower.includes('devops') || lower.includes('хмар') || lower.includes('aws')) {
       updated.contractType = 'DEVOPS';
+      updated.customScope = 'налаштування хмарної інфраструктури AWS та CI/CD пайплайнів';
     } else if (lower.includes('nda') || lower.includes('конфіденційн')) {
       updated.contractType = 'NDA';
-    } else {
-      updated.contractType = 'DEV';
     }
 
     if (lower.includes('погодин') || lower.includes('hourly') || lower.includes('/год')) {
       updated.paymentScheme = 'HOURLY';
     } else if (lower.includes('аванс') || lower.includes('50/50') || lower.includes('передоплат')) {
       updated.paymentScheme = '50_50';
+    } else if (lower.includes('постоплат') || lower.includes('після здачі') || lower.includes('100%')) {
+      updated.paymentScheme = '100_POST';
     }
 
     setConfig(updated);
@@ -90,8 +127,8 @@ export const ContractBuilderView: React.FC = () => {
         `${config.clientName} ("Client") and ${config.contractorName} ("Contractor"), collectively referred to as "Parties", entered into this Agreement as follows:`;
 
     const s1 = isUk
-      ? `1.1. Виконавець зобов’язується надати послуги відповідно до затверджених Технічних завдань, а Замовник — прийняти та своєчасно оплатити належним чином надані послуги.\n1.2. Обсяг послуг суворо обмежується завданнями, зафіксованими у письмових додатках. Будь-які додаткові завдання виконуються за окремим погодженням з доплатою.`
-      : `1.1. Contractor shall provide software development services as specified in signed Statements of Work, and Client shall accept and pay for properly rendered services.\n1.2. Scope is strictly limited to agreed written specifications. Any additional scope requires written change orders and additional compensation.`;
+      ? `1.1. Виконавець зобов’язується надати Замовнику послуги з ${config.customScope || 'розробки програмного забезпечення, проєктування баз даних та технічної підтримки систем'} відповідно до затверджених Технічних завдань, а Замовник — прийняти та своєчасно оплатити належним чином надані послуги.\n1.2. Обсяг послуг суворо обмежується завданнями, зафіксованими у письмових додатках. Будь-які додаткові завдання виконуються за окремим погодженням з доплатою.`
+      : `1.1. Contractor shall provide ${config.customScope || 'software development and technical support services'} as specified in signed Statements of Work, and Client shall accept and pay for properly rendered services.\n1.2. Scope is strictly limited to agreed written specifications. Any additional scope requires written change orders and additional compensation.`;
 
     const paymentText =
       config.paymentScheme === '50_50'
