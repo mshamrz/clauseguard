@@ -230,6 +230,50 @@ export const ContractBuilderView: React.FC = () => {
         </p>
       </div>
 
+      {/* Top Instant Download Banner */}
+      <div className="rounded-3xl border border-teal-200 bg-gradient-to-r from-teal-50 via-white to-emerald-50 p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-white text-xs font-bold">
+                ✓
+              </span>
+              <h3 className="text-base font-extrabold text-ink-primary">
+                {lang === 'uk'
+                  ? 'Ваш готовий договір уже зібрано нижче!'
+                  : 'Your vetted contract is generated below!'}
+              </h3>
+            </div>
+            <p className="text-xs text-ink-secondary leading-relaxed">
+              {lang === 'uk'
+                ? 'Оберіть тип послуги або змініть суму, якщо потрібно, і натисніть кнопку, щоб отримати готовий файл для підписання:'
+                : 'Select your service preset or adjust the fee, and download the ready-to-sign file:'}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              disabled={downloadingDocx}
+              onClick={() => void handleDownloadDocx()}
+              className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-xs font-extrabold text-white shadow-md shadow-brand/20 hover:bg-brand-hover transition disabled:opacity-50"
+            >
+              <FileDown className="h-4 w-4" />
+              <span>{downloadingDocx ? (lang === 'uk' ? 'Генерується...' : 'Generating...') : (lang === 'uk' ? 'Завантажити Word (.docx)' : 'Download Word (.docx)')}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-surface-border bg-white px-3.5 py-2.5 text-xs font-bold text-ink-primary shadow-xs hover:bg-slate-50 transition"
+            >
+              <Printer className="h-4 w-4" />
+              <span>{lang === 'uk' ? 'Зберегти як PDF' : 'Save as PDF'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Natural Language Prompt & Quick Type Selector */}
       <div className="rounded-3xl border border-surface-border bg-surface-card p-6 shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
