@@ -1,0 +1,17 @@
+# Dependencies & build artifacts
+node_modules/
+dist/
+.aws-sam/
+backend/.lambda-build/
+infra/packaged.yaml
+
+# Environment variables & local auth/storage state
+.env
+.env.local
+backend/.env
+frontend/.env
+backend/.local-data/
+
+# OS & editor files
+.DS_Store
+*.log

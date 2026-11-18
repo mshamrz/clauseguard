@@ -1,0 +1,72 @@
+name: CI/CD — Test & Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    name: Build & Verify Phases 1–4
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm run install:all
+
+      - name: Build backend & frontend
+        run: npm run build
+
+      - name: Run Phase 1–4 Automated Test Suites
+        env:
+          BEDROCK_MODE: local
+        run: npm run test:all
+
+  deploy-aws:
+    name: Deploy Stack & Frontend to AWS
+    needs: test-and-build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm run install:all
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Deploy Backend, Infrastructure & Frontend to AWS
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+          STACK_NAME: clauseguard-mvp
+          BEDROCK_MODEL_ID: ${{ vars.BEDROCK_MODEL_ID || 'amazon.nova-lite-v1:0' }}
+          DAILY_AUDIT_CAP: ${{ vars.DAILY_AUDIT_CAP || '50' }}
+          BUDGET_ALERT_EMAIL: ${{ secrets.BUDGET_ALERT_EMAIL || 'adolfvlasiuk@gmail.com' }}
+          MONOBANK_JAR_URL: ${{ vars.MONOBANK_JAR_URL || 'https://send.monobank.ua/jar/your-jar-id' }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: bash infra/deploy.sh
